@@ -1,6 +1,10 @@
 kind: Service
 apiVersion: v1
 metadata:
+{{- if .Values.controller.service.annotations }}
+  annotations:
+{{ toYaml .Values.controller.service.annotations | indent 4 }}
+{{- end }}
   labels:
     app: ingress-nginx
     chart: {{ .Chart.Name }}
@@ -11,11 +15,6 @@ metadata:
   namespace: {{ .Values.global.namespace | default .Release.Namespace }}
   labels:
     app: ingress-nginx
-  annotations:
-    # Enable PROXY protocol
-    service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: '*'
-    # Increase the ELB idle timeout to avoid issues with WebSockets or Server-Sent Events.
-    service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '3600'
 spec:
   type: LoadBalancer
   selector:
