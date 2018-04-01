@@ -20,9 +20,8 @@ spec:
   selector:
     app: ingress-nginx
   ports:
-  - name: http
-    port: 80
-    targetPort: http
-  - name: https
-    port: 443
-    targetPort: https
+  {{- range .Values.controller.service.ports }}
+  - name: {{ .name }}
+    port: {{ .port }}
+    targetPort: {{ .name }}
+  {{- end }}
