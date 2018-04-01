@@ -1,0 +1,39 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    chart: {{ .Chart.Name }}
+    component: {{ template "fullname" . }}
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    app: default-http-backend
+  name: default-http-backend
+  namespace: {{ .Values.global.namespace | default .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: default-http-backend
+  template:
+    metadata:
+      labels:
+        app: default-http-backend
+    spec:
+      terminationGracePeriodSeconds: 60
+      containers:
+      - name: default-http-backend
+        # Any image is permissible as long as:
+        # 1. It serves a 404 page at /
+        # 2. It serves 200 on a /healthz endpoint
+        image: {{ .Values.backend.image.name }}:{{ .Values.backend.image.tag }}
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.backend.service.targetPort }}
+            scheme: HTTP
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+        ports:
+        - containerPort: {{ .Values.backend.service.targetPort }}
+        resources:
+{{ toYaml .Values.backend.resources | indent 10 }}

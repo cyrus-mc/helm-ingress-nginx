@@ -1,0 +1,13 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  labels:
+    app: ingress-nginx
+    chart: {{ .Chart.Name }}
+    component: {{ template "fullname" . }}
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+  name: ingress-nginx
+  namespace: {{ .Values.global.namespace | default .Release.Namespace }}
+data:
+  use-proxy-protocol: "true"

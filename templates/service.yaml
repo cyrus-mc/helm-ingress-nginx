@@ -1,0 +1,29 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: ingress-nginx
+    chart: {{ .Chart.Name }}
+    component: {{ template "fullname" . }}
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+  name: ingress-nginx
+  namespace: {{ .Values.global.namespace | default .Release.Namespace }}
+  labels:
+    app: ingress-nginx
+  annotations:
+    # Enable PROXY protocol
+    service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: '*'
+    # Increase the ELB idle timeout to avoid issues with WebSockets or Server-Sent Events.
+    service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '3600'
+spec:
+  type: LoadBalancer
+  selector:
+    app: ingress-nginx
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+  - name: https
+    port: 443
+    targetPort: https

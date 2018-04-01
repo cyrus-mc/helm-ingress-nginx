@@ -1,0 +1,11 @@
+name: nginx-ingress
+version: 1.0.0
+description: An nginx Ingress controller that uses ConfigMap to store the nginx configuration.
+icon: https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nginx_logo.svg/500px-Nginx_logo.svg.png
+appVersion: 0.28.1
+keywords:
+  - ingress
+  - nginx
+sources:
+  - https://bitbucket.org/dat/helm-nginx-ingress.git
+engine: gotpl

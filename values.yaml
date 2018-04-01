@@ -1,0 +1,57 @@
+Name: ambassador
+
+global:
+  imagePullPolicy: IfNotPresent
+
+  rbac:
+    enabled: true
+
+  scheduling: &scheduling
+    enabled: true
+
+    rules:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: role
+                operator: In
+                values:
+                - 'services'
+
+backend:
+  image:
+    name: gcr.io/google_containers/defaultbackend
+    tag: 1.4
+
+  service:
+    port: 80
+    targetPort: 8080
+    type: ClusterIP
+
+  replicas: 1
+
+  resources:
+    limits:
+      cpu: 10m
+      memory: 20Mi
+    requests:
+      cpu: 10m
+      memory: 20Mi
+
+  scheduling:
+    <<: *scheduling
+
+controller:
+  image:
+    name: quay.io/kubernetes-ingress-controller/nginx-ingress-controller
+    tag: 0.12.0
+
+  replicas: 1
+
+  service:
+  - port: 80
+    name: http
+  - port: 443
+    name: https
